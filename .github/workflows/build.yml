@@ -98,6 +98,19 @@ jobs:
           EOF
       - name: Build APK
         run: gradle --no-daemon :app:assembleDebug
+      - name: Verify APK signatures across Android versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          APKSIGNER="$(find "$ANDROID_HOME/build-tools" -maxdepth 2 -type f -name apksigner | sort -V | tail -n 1)"
+          test -n "$APKSIGNER"
+          "$APKSIGNER" verify --verbose --print-certs "$APK"
+          for API in 23 28 29 30 32 33 34 35 36; do
+            echo "Checking APK signature for Android API $API"
+            "$APKSIGNER" verify --min-sdk-version "$API" --max-sdk-version "$API" "$APK"
+          done
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:

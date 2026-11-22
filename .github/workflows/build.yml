@@ -25,7 +25,9 @@ jobs:
         run: |
           set -euo pipefail
           test -f mahjong_slot.zip
-          mkdir -p app/src/main/assets app/src/main/java/com/mahjongslot/app
+          test -f icon.png
+          mkdir -p app/src/main/assets app/src/main/java/com/mahjongslot/app app/src/main/res/mipmap-nodpi
+          cp icon.png app/src/main/res/mipmap-nodpi/icon.png
           unzip -o mahjong_slot.zip -d app/src/main/assets
           test -f app/src/main/assets/index.html
           cat > settings.gradle <<'EOF'
@@ -56,7 +58,7 @@ jobs:
           cat > app/src/main/AndroidManifest.xml <<'EOF'
           <?xml version="1.0" encoding="utf-8"?>
           <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-              <application android:label="마작 슬롯" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:usesCleartextTraffic="false">
+              <application android:icon="@mipmap/icon" android:roundIcon="@mipmap/icon" android:label="마작 슬롯" android:theme="@android:style/Theme.Material.Light.NoActionBar" android:usesCleartextTraffic="false">
                   <activity android:name=".MainActivity" android:exported="true">
                       <intent-filter>
                           <action android:name="android.intent.action.MAIN" />
